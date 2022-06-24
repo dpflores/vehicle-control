@@ -11,29 +11,12 @@ can be defined using way-points.
 
 STARTING in a moment...
 """
-from __future__ import print_function
-from __future__ import division
-
-# System level imports
-import sys
-import os
-import argparse
-import logging
-import time
-import math
 import numpy as np
-import csv
-import matplotlib.pyplot as plt
-import controller2d
-import configparser 
+x_p = [1, 2]
+y_p = [1, 2]
 
-# Adding the parent path to import the modules
-# Try not to overwrite any important path
-sys.path[1] = os.path.abspath(sys.path[0] + '/..')
-
-import live_plotter as lv   # Custom live plotting library
-from carla            import sensor
-from carla.client     import make_carla_client, VehicleControl
-from carla.settings   import CarlaSettings
-from carla.tcp        import TCPConnectionError
-from carla.controller import utils
+line_coef = np.polyfit(x_p, y_p, 1)
+a = -line_coef[0]
+b = 1
+c = -line_coef[1]
+print(a, b, c)

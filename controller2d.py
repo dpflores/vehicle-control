@@ -4,6 +4,8 @@
 2D Controller Class to be used for the CARLA waypoint follower demo.
 """
 
+from sklearn.preprocessing import normalize
+from torch import normal
 import cutils
 import numpy as np
 
@@ -34,7 +36,7 @@ class Controller2D(object):
 
         # Init lateral controller
         self.pid_lateral = PIDController(kp=0.5, ki =0.01, kd=0.0, Ts=0.033,limMin=-1.22, limMax=1.22) 
-        self.stanley_lateral = StanleyController(k=1, ks=0.5)
+        self.stanley_lateral = StanleyController(k=1, ks=0.1)
 
     def update_values(self, x, y, yaw, speed, timestamp, frame):
         self._current_x         = x
@@ -87,6 +89,8 @@ class Controller2D(object):
         brake           = np.fmax(np.fmin(input_brake, 1.0), 0.0)
         self._set_brake = brake
 
+    
+
     def update_controls(self):
         ######################################################
         # RETRIEVE SIMULATOR FEEDBACK
@@ -126,7 +130,8 @@ class Controller2D(object):
         self.vars.create_var('v_previous', 0.0)
 
         # Declaring my objects and variables
-         
+        k = 1
+        ks = 0.1
 
         # Skip the first frame to store previous values properly
         if self._start_control_loop:
@@ -199,25 +204,31 @@ class Controller2D(object):
                 access the persistent variables declared above here. For
                 example, can treat self.vars.v_previous like a "global variable".
             """
-            # Stanley
-            # heading = 0
-            # e = 0
-            # v = self._current_speed
 
-            # self.stanley_lateral.control(heading, e, v)
+            # STANLEY
+            # Initial and final waypoint from the range of visibility of the vehicle
+            x0 = waypoints[0][0]; y0 = waypoints[0][1]  
+            x1 = waypoints[-1][0]; y1 = waypoints[-1][1]
+            p0 = [x0, y0]   # Initial point
+            p1 = [x1, y1]   # Final point
+            current_pos = [x,y]
 
-            # PID
-            x_d = waypoints[-1][0]
-            y_d = waypoints[-1][1]
+            steer = self.stanley_lateral.control(current_pos, yaw, v, p0, p1)
+            # END of Stanley
 
-            phi_d = np.arctan2((y_d-y),(x_d-x))
-            alpha= phi_d - yaw
-            #error = alpha
-            error = np.arctan2(np.sin(alpha),np.cos(alpha))
-            steer = self.pid_lateral.control(error)
+            # # PID
+            # x_d = waypoints[-1][0]
+            # y_d = waypoints[-1][1]
+            # path_angle = np.arctan2((y_d-y),(x_d-x))
+            # alpha= path_angle - yaw
+            # #error = alpha
+            # error = np.arctan2(np.sin(alpha),np.cos(alpha))
+            
+            # steer = self.pid_lateral.control(error)
+            # # END of PID
             
             # Change the steer output with the lateral controller. 
-            steer_output    = steer
+            steer_output = steer
 
             ######################################################
             # SET CONTROLS OUTPUT
