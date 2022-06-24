@@ -51,7 +51,7 @@ class PIDController():
         return u
 
 class StanleyController():
-    def __init__(self,k=1, ks=0.1):
+    def __init__(self,k=1, ks=0.01):
         self.k = k
         self.ks = ks
         
@@ -72,9 +72,9 @@ class StanleyController():
     def control(self, current_position, yaw, v, path0, path1):
         """
         Stranley Control.
-        :current_position: [p0, p1], list of current 2D position
+        :current_position: [p0, p1], list of current 2D head position
         :yaw: current yaw angle
-        :v: current vehicle speed
+        :v: current forward velocity
         :path0: list of initial point of local path
         :path1: list of final point of local path
         """
@@ -114,3 +114,51 @@ class StanleyController():
 
         return steer
 
+
+class PurePursuit():
+
+    def __init__(self, L=2, Kdd=0.5, ks = 0.01) -> None:
+        self.L = L
+        self.Kdd = Kdd
+        self.ks =ks
+    
+    def normalize_angle(self, angle):
+        """
+        Normalize an angle to [-pi, pi].
+        :param angle: (float)
+        :return: (float) Angle in radian in [-pi, pi]
+        """
+        while angle > np.pi:
+            angle -= 2.0 * np.pi
+
+        while angle < -np.pi:
+            angle += 2.0 * np.pi
+
+        return angle
+
+    def control(self, current_position, yaw, v, path0, path1):
+        """
+        Pure Pursuit Control.
+        :current_position: [p0, p1], list of current 2D head position
+        :yaw: current yaw angle
+        :v: current forward velocity
+        :path0: list of initial point of local path
+        :path1: list of final point of local path
+        """
+        x = current_position[0]
+        y = current_position[1]
+        
+        xr = x - self.L*np.cos(yaw) # x position of rear axle
+        yr = y - self.L*np.sin(yaw) # y position of rear axle
+        
+        x0 = path0[0]
+        y0 = path0[1]
+        x1 = path1[0]
+        y1 = path1[1]
+
+        alpha = np.arctan2(y1-yr, x1-xr) - yaw  # Alpha (angle between the look ahead line and vehicle)
+        alpha = self.normalize_angle(alpha) # keep -pi to pi
+        ld = self.Kdd * v  # lookahead distance
+
+        steer = np.arctan(2*self.L*np.sin(alpha)/(ld + self.ks))
+        return steer

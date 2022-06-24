@@ -37,6 +37,7 @@ class Controller2D(object):
         # Init lateral controller
         self.pid_lateral = PIDController(kp=0.5, ki =0.01, kd=0.0, Ts=0.033,limMin=-1.22, limMax=1.22) 
         self.stanley_lateral = StanleyController(k=1, ks=0.1)
+        self.pure_pursuit_lateral = PurePursuit(L=2, Kdd=0.5, ks=0.01)
 
     def update_values(self, x, y, yaw, speed, timestamp, frame):
         self._current_x         = x
@@ -204,6 +205,15 @@ class Controller2D(object):
                 access the persistent variables declared above here. For
                 example, can treat self.vars.v_previous like a "global variable".
             """
+            # PURE PURSUIT
+            # Initial and final waypoint from the range of visibility of the vehicle
+            x0 = waypoints[0][0]; y0 = waypoints[0][1]  
+            x1 = waypoints[-1][0]; y1 = waypoints[-1][1]
+            p0 = [x0, y0]   # Initial point
+            p1 = [x1, y1]   # Final point
+            current_pos = [x,y]
+
+            steer = self.pure_pursuit_lateral.control(current_pos, yaw, v, p0, p1)
 
             # STANLEY
             # Initial and final waypoint from the range of visibility of the vehicle
