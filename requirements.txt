@@ -1,0 +1,4 @@
+numpy
+matplotlib==2.2.5
+pygame
+protobuf

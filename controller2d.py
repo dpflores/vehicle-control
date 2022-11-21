@@ -4,8 +4,6 @@
 2D Controller Class to be used for the CARLA waypoint follower demo.
 """
 
-from sklearn.preprocessing import normalize
-from torch import normal
 import cutils
 import numpy as np
 

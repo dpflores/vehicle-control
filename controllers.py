@@ -117,7 +117,7 @@ class StanleyController():
 
 class PurePursuit():
 
-    def __init__(self, L=2, Kdd=0.5, ks = 0.01) -> None:
+    def __init__(self, L=2, Kdd=0.5, ks = 0.01):
         self.L = L
         self.Kdd = Kdd
         self.ks =ks
