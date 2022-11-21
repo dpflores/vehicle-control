@@ -10,6 +10,16 @@ import numpy as np
 # My import
 from controllers import *
 
+#PID TUNNING
+KP = 0.5
+KI = 0.5
+KD = 0.0
+
+#STANLEY TUNNING
+K = 1
+KS = 0.2
+
+
 class Controller2D(object):
     def __init__(self, waypoints):
         self.vars                = cutils.CUtils()
@@ -30,11 +40,11 @@ class Controller2D(object):
         self._2pi                = 2.0 * np.pi
 
         # Init longitudinal controller
-        self.pid_speed = PIDController(kp=0.5, ki =0.5, kd=0.1, Ts=0.033,limMin=-1.0, limMax=1.0) 
+        self.pid_speed = PIDController(KP, KI, KD, Ts=0.033,limMin=-1.0, limMax=1.0) 
 
         # Init lateral controller
         self.pid_lateral = PIDController(kp=0.5, ki =0.01, kd=0.0, Ts=0.033,limMin=-1.22, limMax=1.22) 
-        self.stanley_lateral = StanleyController(k=1, ks=0.1)
+        self.stanley_lateral = StanleyController(K, KS)
         self.pure_pursuit_lateral = PurePursuit(L=2, Kdd=0.5, ks=0.01)
 
     def update_values(self, x, y, yaw, speed, timestamp, frame):
@@ -128,9 +138,7 @@ class Controller2D(object):
         """
         self.vars.create_var('v_previous', 0.0)
 
-        # Declaring my objects and variables
-        k = 1
-        ks = 0.1
+    
 
         # Skip the first frame to store previous values properly
         if self._start_control_loop:

@@ -50,8 +50,8 @@ def grade(waypoints, solution, visualize = False):
     N = waypoints.shape[0]
 
     results = {
-    'd_thresh' : 3,           # distance to waypoints
-    'v_thresh' : 3,           # speed difference at waypoints
+    'd_thresh' : 0.2,           # distance to waypoints
+    'v_thresh' : 0.5,           # speed difference at waypoints
     'pass_percentage': 50,    # percentage of correct waypoints required
     'solution' : solution,
     'waypoints': waypoints,

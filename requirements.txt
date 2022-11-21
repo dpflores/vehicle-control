@@ -1,4 +1,5 @@
 numpy
 matplotlib==2.2.5
 pygame
-protobuf
+protobuf==3.19.4
+Pillow==2.2.1

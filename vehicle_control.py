@@ -43,13 +43,14 @@ from carla.controller import utils
 Configurable params
 """
 ITER_FOR_SIM_TIMESTEP  = 10     # no. iterations to compute approx sim timestep
-WAIT_TIME_BEFORE_START = 5.00   # game seconds (time before controller start)
+WAIT_TIME_BEFORE_START = 1.00   # game seconds (time before controller start)
 TOTAL_RUN_TIME         = 200.00 # game seconds (total runtime before sim end)
 TOTAL_FRAME_BUFFER     = 300    # number of frames to buffer after total runtime
 NUM_PEDESTRIANS        = 0      # total number of pedestrians to spawn
 NUM_VEHICLES           = 0      # total number of vehicles to spawn
 SEED_PEDESTRIANS       = 0      # seed for pedestrian spawn randomizer
 SEED_VEHICLES          = 0      # seed for vehicle spawn randomizer
+
 
 WEATHERID = {
     "DEFAULT": 0,
@@ -79,14 +80,17 @@ PLOT_WIDTH         = 0.8
 PLOT_HEIGHT        = 0.8
 
 # WAYPOINTS_FILENAME = 'racetrack_waypoints.txt'  # waypoint file to load
-WAYPOINTS_FILENAME = 'racetrack_waypoints.txt'  # waypoint file to load
-DIST_THRESHOLD_TO_LAST_WAYPOINT = 2.0  # some distance from last position before
+WAYPOINTS_FILENAME = 'waypoints/waypoints.txt'  # waypoint file to load
+DIST_THRESHOLD_TO_LAST_WAYPOINT = 2  # some distance from last position before
+                                       # simulation ends
+DIST_THRESHOLD_TO_LAST_WAYPOINT = 0.5  # some distance from last position before
                                        # simulation ends
                                        
 # Path interpolation parameters
 INTERP_MAX_POINTS_PLOT    = 10   # number of points used for displaying
                                  # lookahead path
 INTERP_LOOKAHEAD_DISTANCE = 20   # lookahead in meters
+INTERP_LOOKAHEAD_DISTANCE = 1   # lookahead in meters
 INTERP_DISTANCE_RES       = 0.01 # distance between interpolated points
 
 # controller output directory
@@ -101,6 +105,7 @@ def make_carla_settings(args):
     # There is no need for non-agent info requests if there are no pedestrians
     # or vehicles.
     get_non_player_agents_info = False
+
     if (NUM_PEDESTRIANS > 0 or NUM_VEHICLES > 0):
         get_non_player_agents_info = True
 
@@ -422,9 +427,10 @@ def exec_waypoint_nav_demo(args):
         ###
         trajectory_fig = lp_traj.plot_new_dynamic_2d_figure(
                 title='Vehicle Trajectory',
-                figsize=(FIGSIZE_X_INCHES, FIGSIZE_Y_INCHES),
-                edgecolor="black",
-                rect=[PLOT_LEFT, PLOT_BOT, PLOT_WIDTH, PLOT_HEIGHT])
+                # figsize=(FIGSIZE_X_INCHES, FIGSIZE_Y_INCHES),
+                # edgecolor="black",
+                # rect=[PLOT_LEFT, PLOT_BOT, PLOT_WIDTH, PLOT_HEIGHT]
+                )
 
         trajectory_fig.set_invert_x_axis() # Because UE4 uses left-handed 
                                            # coordinate system the X
