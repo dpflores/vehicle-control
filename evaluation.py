@@ -51,7 +51,7 @@ def grade(waypoints, solution, visualize = False):
 
     results = {
     'd_thresh' : 0.2,           # distance to waypoints
-    'v_thresh' : 0.5,           # speed difference at waypoints
+    'v_thresh' : 0.22,           # speed difference at waypoints
     'pass_percentage': 50,    # percentage of correct waypoints required
     'solution' : solution,
     'waypoints': waypoints,
@@ -94,32 +94,66 @@ def display_path(results):
     '''
     
     fig, ax = plt.subplots()
-    plt.plot(results['waypoints'][:,0], results['waypoints'][:,1], '*', label='waypoints')
-    plt.plot(results['solution'][:,0], results['solution'][:,1], label='solution')
+    plt.plot(results['waypoints'][:,0], results['waypoints'][:,1], '*', label='puntos de trayectoria')
+    plt.plot(results['solution'][:,0], results['solution'][:,1], label='trayectoria real')
     for i in range(results['waypoints'].shape[0]):
         center = (results['waypoints'][i,0],results['waypoints'][i,1])
         circle = plt.Circle(center, results['d_thresh'], color='g', fill=False)
         ax.add_artist(circle)
-        
-    plt.legend()
-    plt.xlabel('x (m)')
-    plt.ylabel('y (m)')
-    plt.title('Waypoints and Solution Path')
+
+    x0 = results['waypoints'][:,0][0]
+    y0 = results['waypoints'][:,1][0]
+
+    x1 = results['waypoints'][:,0][-1]
+    y1 = results['waypoints'][:,1][-1]
+
+    ax.plot([x0],[y0],marker="o", markersize=7, markeredgecolor="red", markerfacecolor="red")
+    ax.annotate('A', (x0+0.5, y0))
+    ax.plot([x1],[y1],marker="o", markersize=7, markeredgecolor="blue", markerfacecolor="blue")
+    ax.annotate('B', (x1-0.2, y1))
+    
+    ax.invert_xaxis()   
+    plt.legend(fontsize=12)
+    plt.xlabel(r'posici\'on x (m)', fontsize=12)
+    plt.ylabel(r'posici\'on y (m)', fontsize=12)
+    # plt.title('Treyectoria real y trayectoria deseada', fontsize=16)
     
     plt.subplots()
-    plt.plot(results['waypoints'][:,2], label='reference speed')
-    plt.plot(results['solution'][results['inds'],2], label='vehicle speed')
+    plt.plot(results['waypoints'][:,2], label='velocidad de referencia')
+    plt.plot(results['solution'][results['inds'],2], label=r'velocidad del veh\'iculo')
     plt.plot(results['waypoints'][:,2] + results['v_thresh'], '--', color = 'C2')
     plt.plot(results['waypoints'][:,2] - results['v_thresh'], '--', color = 'C2')
     
-    plt.legend()
-    plt.xlabel('Waypoint #')
-    plt.ylabel('Speed (m/s)')
-    plt.title('Speed Profiles')
+    plt.legend(fontsize=12)
+    plt.xlabel('\# de punto de trayectoria', fontsize=12)
+    plt.ylabel('Velocidad (m/s)', fontsize=12)
+    # plt.title('Perfiles de velocidad', fontsize=16)
     
+
+    plt.subplots()
+    plt.plot(results['solution'][:,3],2*np.ones_like(results['solution'][:,3]), label='velocidad de referencia')
+    plt.plot(results['solution'][:,3], results['solution'][:,2], label=r'velocidad del veh\'iculo')
+    
+    plt.legend(fontsize=12)
+    plt.xlabel('tiempo (s)', fontsize=12)
+    plt.ylabel('Velocidad (m/s)', fontsize=12)
+    # plt.title('Respuesta de velocidad', fontsize=16)
+
     plt.show(block=True)
 
+
+    
+
 if __name__ == '__main__':
+
+    # For latex rendering
+    try:
+        plt.rcParams.update({
+            "text.usetex": True,
+            "font.family": "DejaVu Sans"
+        })
+    except:
+        pass
     
     files = sys.argv
     waypoint_file = files[1]

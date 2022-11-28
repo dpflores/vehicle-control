@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+
+
 WAYPOINTS_FILE = 'waypoints/waypoints.txt'
 
 class WaypointGenerator():
@@ -42,7 +44,7 @@ class WaypointGenerator():
         if mode=='change':
             n = self.x_displacement/2
             S = self.y_displacement
-            y = -S/(1+np.exp(-(x-self.x_end-n))) + S + self.y_init
+            y = -S/(1+np.exp(-(x-self.x_end-n))) + self.y_end
         else:
             y = self.y_init*np.ones_like(x)
 
@@ -70,6 +72,8 @@ class WaypointGenerator():
         return self.x, self.y, self.x_v, self.v
 
     def plot(self):
+
+
         x =np.flip(self.x)
         y =np.flip(self.y)
         Ax = [x[0]]
@@ -79,35 +83,67 @@ class WaypointGenerator():
         By = [y[-1]]
 
         fig = plt.figure()
-        fig.suptitle(r'$Puntos\, de\, trayectoria$')
+        # fig.suptitle('Puntos de trayectoria', fontsize=16)
 
-
+        
+        
+        
         ax1 = fig.add_subplot(2,1,1)
-        ax1.plot(self.x, self.y, 'r-')
+
+        # Drawing lines
+        y1 = (self.y_init-1.75)*np.ones_like(self.x)
+        ax1.plot(self.x,y1, '#f7b500', linewidth=4)
+
+        y2 = (self.y_init+1.75)*np.ones_like(self.x)
+        ax1.plot(self.x,y2,'#f7b500', linewidth=4)
+
+        y3 = (self.y_init+3*1.75)*np.ones_like(self.x)
+        ax1.plot(self.x,y3, '#f7b500', linewidth=4)
+
+        # Draw path
+        ax1.plot(self.x, self.y, 'r--', linewidth=4)
+
+
+        
+
+        # Drawing points
 
         ax1.plot(Ax,Ay,marker="o", markersize=7, markeredgecolor="red", markerfacecolor="red")
         ax1.annotate('A', (x[0], y[0]+0.5))
         ax1.plot(Bx,By,marker="o", markersize=7, markeredgecolor="blue", markerfacecolor="blue")
         ax1.annotate('B', (x[-1], y[-1]+0.5))
 
+
+        
+
+
         ax1.invert_xaxis()
 
         # ax1.set_ybound(129,132.8)
 
-        ax1.set_xlabel("posición x (m)")
-        ax1.set_ylabel("posición y (m)")
+        ax1.set_xlabel(r"posici\'on x (m)",fontsize=12)
+        ax1.set_ylabel(r"posici\'on y (m)", fontsize=12)
 
         ax2 = fig.add_subplot(2,1,2)
 
-        ax2.plot(self.x_v, self.v, 'b-')
+        ax2.plot(self.x_v, self.v, 'b-',linewidth=2)
 
-        ax2.set_xlabel("desplazamiento (m)")
-        ax2.set_ylabel("velocidad (m/s)")
+        ax2.set_xlabel("desplazamiento (m)",fontsize=12)
+        ax2.set_ylabel("velocidad (m/s)",fontsize=12)
 
         plt.show()
 
 
 def main():
+
+    # For latex rendering
+    try:
+        plt.rcParams.update({
+            "text.usetex": True,
+            "font.family": "DejaVu Sans"
+        })
+    except:
+        pass
     # x_init = 269.347
     # y_init = 129.49
 

@@ -11,12 +11,12 @@ import numpy as np
 from controllers import *
 
 #PID TUNNING
-KP = 0.5
-KI = 0.5
-KD = 0.0
+KP = 1.0
+KI = 0.35
+KD = 0.1
 
 #STANLEY TUNNING
-K = 1
+K = 3.5
 KS = 0.2
 
 
